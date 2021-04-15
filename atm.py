@@ -22,6 +22,7 @@ def init():
 
 
 def register():
+    global account_number
 
     print('******************** Register ********************')
     print("********Please enter your correct details*********\n")
@@ -31,10 +32,11 @@ def register():
     email = input('What is your email address: \n')
     password = input('Create a password for yourself: \n')
     
+    
     print("")
     account_number = generate_account_num()
-    database[account_number] = [ first_name, last_name, email, password, 0 ]
-
+    database[account_number] = [ first_name, last_name, email, password,  ]
+    
     print('Your Accout have been created')
     print('====**************************====')
     print('Your account number is: %d' % account_number)
@@ -78,7 +80,7 @@ def bank_operation(detail):
             deposit()
 
         elif (int(selected_option) == 2):
-            withdrawal()
+            withdrawal(account_number)
 
         elif (int(selected_option) == 3):
             logout()
@@ -91,37 +93,34 @@ def bank_operation(detail):
         print('Enter an integer')
         bank_operation(detail)
 
-def set_current_balance(detail, balance):
-    balance = detail[4]
-    return balance
-
-# def get_current_balance(detail):
-#     return database[detail][0]
 
 def deposit():
-    
-    current_balance = set_current_balance(balance)
-    print(current_balance)
+    global account_number
 
-    user_deposit = int(input("How much would you like to deposit \n"))
+    balance = 0
+    amt_to_deposit = int(input('How much would you like to deposit:  '))
+    balance +=amt_to_deposit
 
-    current_balance += user_deposit
-    print(f'Your new balance is {current_balance}')
+    database[account_number].append(balance)
+    print(f'Your new balance is {balance}')
     perform()
 
-def withdrawal():
-    pass
 
-    #get current balance
-    #get amount to withdraw
-    #check if current balance >withdraw amt
-    #deduct withdraw amount from current balance
-    #display current balance
+def withdrawal(account_number):
+    withdraw_amt = int(input('How much would you like to withdraw \n'))
+    get_balance = int(database[account_number][4])
 
-    # withdraw_amt = int(input('How much would you like to withdraw \n'))
-    # print('Take you cash')
-    # print(f'Your withdrawal amount is {withdraw_amt}')
-    # perform()
+    if withdraw_amt > get_balance:
+        print('Account balance is low')
+        withdrawal(account_number)
+
+    elif withdraw_amt < get_balance:
+        balance = get_balance - withdraw_amt
+        database[account_number].append(balance)
+        print('Take your cash')
+        print(f'Your Account balance is {balance}')
+        perform()
+
 
 def perform():
     transaction = int(input('Do you want to peform another? 1.Yes 2.No:\n'))
@@ -130,19 +129,13 @@ def perform():
         login()
 
     elif (transaction == 2):
+        print(database)
         logout()
 
 
 def generate_account_num():
     num = random.randrange(1111111111, 9999999999)
     return num
-
-
-
-
-
-
-
 
 
 def logout():
